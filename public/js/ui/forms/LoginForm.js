@@ -10,6 +10,23 @@ class LoginForm extends AsyncForm {
    * закрывает окно, в котором находится форма
    * */
   onSubmit(data) {
+    User.login(data, ( err, response ) => {
+      if (err) {
+        console.log('ошибка входа: ', err);
+        return;
+      }
+    
+      if (!response.success) {
+       alert(response.error);
+       return;
+      }
 
+      this.element.reset();
+      App.setState('user-logged');
+      console.log(response);                 // убрать
+
+      const currentModal = App.getModal('login');
+      currentModal.close();
+    });
   }
 }
