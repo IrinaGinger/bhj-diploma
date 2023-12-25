@@ -15,19 +15,16 @@ class RegisterForm extends AsyncForm {
         console.log('ошибка регистрации: ', err);
         return;
       }
+
+      if (!response.success) {
+        alert(response.error);
+        return;
+      } 
     
       this.element.reset();
       App.setState('user-logged');
-      console.log(response);                 // убрать
-
-      const currentModal = App.getModal('register');
-      currentModal.close();
+      
+      App.getModal('register').close();
     });
   }
 }
-
-// Регистрирует пользователя через User.register
-// При успешной регистрации сбрасывает форму
-// При успешной регистрации задаёт состояние App.setState( 'user-logged' ). 
-// То есть мы сразу авторизуем пользователя после успешной регистрации.
-// Находит окно, в котором находится форма и закрывает его (через метод Modal.close)

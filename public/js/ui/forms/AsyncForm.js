@@ -23,13 +23,12 @@ class AsyncForm {
   }
 
   set element(value) {
-    if (value.length === 0) {
-      console.log("форма не существует");
-      return;
+    if (!value) {
+      throw new Error("форма не существует");
+    } else {
+      this._element = value;
     }
-    this._element = value;
   }
-
 
   /**
    * Необходимо запретить отправку формы и в момент отправки
@@ -37,15 +36,9 @@ class AsyncForm {
    * */
   registerEvents() {
     this.element.addEventListener('submit', (event) => {
-      try {
-        event.preventDefault();
-        this.submit();
-      }
-      catch (err) {
-        console.log('ошибка отправки: ', err);           // ???????????????
-      }
-
-    })
+      event.preventDefault();
+      this.submit();
+    });
   }
 
   /**
@@ -56,18 +49,8 @@ class AsyncForm {
    * }
    * */
   getData() {
-    const formData = new FormData(this.element),
-          entries = formData.entries();
-
-    let dataObject = {};
-
-    for (let item of entries) {
-      const key = item[0],
-            value = item[1];
-      dataObject[key] = value;
-    }
-
-    return dataObject;
+    const formData = new FormData(this.element);
+    return Object.fromEntries(formData.entries());
   }
 
   onSubmit(options){
@@ -79,9 +62,6 @@ class AsyncForm {
    * данные, полученные из метода getData()
    * */
   submit() {
-    let data = this.getData();
-    console.log('получены данные в классе AsyncForm', data);
-
-    this.onSubmit(data);
+    this.onSubmit(this.getData());
   }
 }

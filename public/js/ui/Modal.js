@@ -22,11 +22,11 @@ class Modal {
   }
 
   set element(value) {
-    if (value.length === 0) {
-      console.log("модальное окно не существует");
-      return;
+    if (!value) {
+      throw new Error("модальное окно не существует");
+    } else {
+      this._element = value;
     }
-    this._element = value;
   }
 
   /**

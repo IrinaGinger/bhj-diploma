@@ -18,8 +18,8 @@ class Sidebar {
    * при нажатии на кнопку .sidebar-toggle
    * */
   static initToggleButton() {
-    const toggleButton = document.getElementsByClassName('sidebar-toggle')[0];
-    const sideBarMini = document.getElementsByClassName('sidebar-mini')[0];
+    const toggleButton = document.querySelector('.sidebar-toggle');
+    const sideBarMini = document.querySelector('.sidebar-mini');
 
     toggleButton.addEventListener('click', () => {
       sideBarMini.classList.toggle('sidebar-open');
@@ -52,11 +52,9 @@ class Sidebar {
             }
         
             App.setState('init');
-            console.log(response);                 // убрать
           });
         } else {
-          const currentModal = App.getModal(typeOfButton);
-          currentModal.open();
+          App.getModal(typeOfButton).open();
         }
       });
     }

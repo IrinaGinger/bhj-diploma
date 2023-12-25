@@ -12,7 +12,7 @@ class User {
   static url = '/user';
   
   static setCurrent(user) {
-    localStorage.setItem('user', user);
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   /**
@@ -28,11 +28,7 @@ class User {
    * из локального хранилища
    * */
   static current() {
-    let currentUser = localStorage.getItem('user');
-    if (!currentUser) {
-      return undefined;
-    }
-    return currentUser;
+    return JSON.parse(localStorage.getItem('user'));
   }
 
   /**
@@ -40,19 +36,18 @@ class User {
    * авторизованном пользователе.
    * */
   static fetch(callback) {
-    // createRequest({
-    //   url: this.url + '/current',
-    //   method: 'GET',
-    //   callback( err, response ) {
-    //     if ( response && response.user ) {
-    //       User.setCurrent( response.user );
-    //     } else {
-    //       this.unsetCurrent(this.current());
-    //     }
-    //     // вызываем параметр, переданный в метод fetch
-    //     callback( err, response );
-    //   }
-    // });
+    createRequest({
+      url: this.url + '/current',
+      method: 'GET',
+      callback: ( err, response ) => {
+        if ( response.success && response.user ) {
+          this.setCurrent( response.user );
+        } else {
+          this.unsetCurrent(this.current());
+        }
+        callback( err, response );
+      }
+    });
   }
 
   /**

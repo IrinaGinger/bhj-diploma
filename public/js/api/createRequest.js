@@ -6,54 +6,36 @@ const createRequest = (options) => {
   const xhr = new XMLHttpRequest();
   xhr.responseType = 'json';
 
+  let formData;
   let optionUrl = options.url;
-  console.log(optionUrl);                                   // убрать
-  console.log(options);                                     // убрать
-     
-  try {
-    if (options.method === 'GET') {
-      if (!options.data.email) {
-        alert("Не указан Email");
-        return;
-      }  
-        
-      optionUrl = optionUrl + '?mail=' + options.data.email + '&password=' + options.data.password;
-
-      xhr.open(options.method, optionUrl);
-      xhr.send();
-
-    } else {
-      formData = new FormData();
-
-      if (options.data) {
-        if (options.data.name) {
-          formData.append('name', options.data.name);
-        }
-        if (options.data.email) {
-          formData.append('email', options.data.email);
-        }
-        if (options.data.password) {
-          formData.append('password', options.data.password);  
-        }
+  
+  if (options.method === 'GET') {
+    if (options.data) {
+      optionUrl = optionUrl + '?';
+      for (key in options.data) {
+        optionUrl = optionUrl + key + '=' + options.data[key] + '&';
       }
-          
-      xhr.open(options.method, optionUrl);
-      xhr.send(formData);
+      optionUrl = optionUrl.slice(0, -1);
     }
-    
-    xhr.addEventListener('load', () => {     // loadend?
-        
-      if (xhr.status != 200) {               // надо?
-        options.callback(err);
-        return;
+  } else {
+    formData = new FormData();
+
+    if (options.data) {
+      for (key in options.data) {
+        formData.append(key, options.data[key]);
       }
-      options.callback(null, xhr.response);
-    })
-
+    }
+  }  
+       
+  try {
+    xhr.open(options.method, optionUrl);
+    xhr.send(formData);
   }
-  catch (err) {
-    // перехват сетевой ошибки
-    options.callback(err);
+  catch (e) {
+    options.callback(e);
   }
-};
 
+  xhr.addEventListener('load', () => {     
+    options.callback(null, xhr.response);
+  })
+}
