@@ -16,6 +16,7 @@ class AccountsWidget {
   constructor( element ) {
     this.element = element;
    
+    this.registerEvents();
     this.update();
   }
   
@@ -39,19 +40,23 @@ class AccountsWidget {
    * вызывает AccountsWidget.onSelectAccount()
    * */
   registerEvents() {
+    const accountsPanel = document.querySelector('.accounts-panel');
     const createAccountElement = document.querySelector('.create-account');
-    let accountElements = Array.from(document.getElementsByClassName('account'));
 
-    createAccountElement.addEventListener('click', () => {
-      App.getModal('createAccount').open();
-    })
+    accountsPanel.addEventListener('click', (event) => {
+      let accountElements = Array.from(document.getElementsByClassName('account'));
 
-    for (let item of accountElements) {
-      item.firstElementChild.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.onSelectAccount(item);
-      });
-    }
+      if (event.target.closest('.create-account') === createAccountElement) {
+        App.getModal('createAccount').open();
+      }
+
+      for (let item of accountElements) {
+        if (event.target.closest('.account') === item) {
+          event.preventDefault();
+          this.onSelectAccount(item);
+        }
+      }
+    });
   }
 
   /**
@@ -78,8 +83,6 @@ class AccountsWidget {
         response.data.forEach(elem => {
           this.renderItem(elem);             
         }); 
-        
-        this.registerEvents();                                                 
       });
     }
   }
